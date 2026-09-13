@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Ndukuh Capital</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(circle at top left, #4b176b 0%, #170b25 35%, #050505 75%),
+                #050505;
+            background-attachment: fixed;
+            color: #ffd84d;
+            min-height: 100vh;
+            font-weight: bold;
+        }
+
+        /* =========================
+           LOADING SCREEN
+        ========================== */
+
+        #loadingScreen {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            background:
+                radial-gradient(circle at center, #4b176b 0%, #180a27 38%, #050505 78%);
+
+            transition: opacity 0.7s ease, visibility 0.7s ease;
+        }
+
+        #loadingScreen.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-title {
+            color: #ffd84d;
+            font-size: 38px;
+            text-align: center;
+            letter-spacing: 2px;
+
+            text-shadow:
+                0 0 5px #ffd84d,
+                0 0 15px #ffd84d,
+                0 0 30px #ffb700;
+        }
+
+        .loading-subtitle {
+            margin-top: 10px;
+            color: #fff;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .loader {
+            width: 45px;
+            height: 45px;
+            margin-top: 25px;
+
+            border: 4px solid rgba(255, 216, 77, 0.25);
+            border-top: 4px solid #ffd84d;
+            border-radius: 50%;
+
+            animation: spin 0.9s linear infinite;
+
+            box-shadow:
+                0 0 10px #ffd84d,
+                0 0 20px rgba(255, 216, 77, 0.5);
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* =========================
+           MAIN PAGE
+        ========================== */
+
+        #mainContent {
+            display: none;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            padding: 35px 15px 20px;
+        }
+
+        .logo {
+            color: #ffd84d;
+            font-size: 42px;
+            letter-spacing: 2px;
+
+            text-shadow:
+                0 0 5px #ffd84d,
+                0 0 12px #ffd84d,
+                0 0 25px #ffb700,
+                0 0 40px #ffb700;
+        }
+
+        .subtitle {
+            margin-top: 8px;
+            color: #ffd84d;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px #ffd84d;
+        }
+
+        .description {
+            max-width: 700px;
+            margin: 25px auto 0;
+            padding: 0 20px;
+
+            color: white;
+            line-height: 1.6;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        /* =========================
+           MENU
+        ========================== */
+
+        .menu-container {
+            width: min(900px, 92%);
+            margin: 35px auto;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .menu-button {
+            width: 100%;
+            min-height: 90px;
+
+            background: rgba(0, 0, 0, 0.88);
+            color: #ffd84d;
+
+            border: 2px solid #ffd84d;
+            border-radius: 14px;
+
+            padding: 20px 10px;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 0 5px rgba(255, 216, 77, 0.6),
+                inset 0 0 10px rgba(255, 216, 77, 0.08);
+
+            transition: 0.25s ease;
+        }
+
+        .menu-button:hover {
+            transform: translateY(-3px);
+
+            background: #090909;
+
+            box-shadow:
+                0 0 10px #ffd84d,
+                0 0 25px rgba(255, 216, 77, 0.7),
+                inset 0 0 15px rgba(255, 216, 77, 0.15);
+        }
+
+        .menu-button:active {
+            transform: scale(0.97);
+        }
+
+        /* =========================
+           DISCLAIMER
+        ========================== */
+
+        .disclaimer {
+            width: min(850px, 90%);
+            margin: 35px auto 50px;
+
+            padding: 18px;
+
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+
+            border: 1px solid #ffd84d;
+            border-radius: 10px;
+
+            font-size: 12px;
+            line-height: 1.6;
+            text-align: center;
+
+            box-shadow: 0 0 10px rgba(255, 216, 77, 0.35);
+        }
+
+        /* =========================
+           POPUP
+        ========================== */
+
+        #popupOverlay {
+            display: none;
+
+            position: fixed;
+            inset: 0;
+            z-index: 5000;
+
+            background: rgba(0, 0, 0, 0.78);
+
+            justify-content: center;
+            align-items: center;
+
+            padding: 20px;
+        }
+
+        .popup {
+            width: min(430px, 100%);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #170b25,
+                    #050505 70%
+                );
+
+            border: 2px solid #ffd84d;
+            border-radius: 18px;
+
+            padding: 28px 22px;
+
+            text-align: center;
+
+            box-shadow:
+                0 0 10px #ffd84d,
+                0 0 30px rgba(255, 216, 77, 0.45);
+        }
+
+        .popup h2 {
+            color: #ffd84d;
+            font-size: 22px;
+            margin-bottom: 15px;
+
+            text-shadow:
+                0 0 8px #ffd84d;
+        }
+
+        .popup p {
+            color: white;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 22px;
+        }
+
+        .popup-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .popup-buttons button {
+            flex: 1;
+
+            min-height: 48px;
+
+            border-radius: 10px;
+
+            font-size: 14px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .download-button {
+            background: #ffd84d;
+            color: #000;
+            border: 2px solid #ffd84d;
+
+            box-shadow:
+                0 0 10px rgba(255, 216, 77, 0.7);
+        }
+
+        .cancel-button {
+            background: #080808;
+            color: #ffd84d;
+            border: 2px solid #ffd84d;
+        }
+
+        .download-button:hover {
+            background: #fff0a0;
+        }
+
+        .cancel-button:hover {
+            background: #161616;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
+
+        @media (max-width: 700px) {
+            .menu-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .logo {
+                font-size: 34px;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .menu-button {
+                min-height: 70px;
+            }
+
+            .popup-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         LOADING SCREEN
+    ========================== -->
+
+    <div id="loadingScreen">
+
+        <div class="loading-title">
+            Ndukuh Capital
+        </div>
+
+        <div class="loading-subtitle">
+            Trading • Investment • Business
+        </div>
+
+        <div class="loader"></div>
+
+    </div>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main id="mainContent">
+
+        <header>
+
+            <div class="logo">
+                Ndukuh Capital
+            </div>
+
+            <div class="subtitle">
+                Trading • Investment • Business • Accounting
+            </div>
+
+            <p class="description">
+                Website ini dibuat untuk memberikan edukasi gratis untuk anda
+            </p>
+
+        </header>
+
+
+        <section class="menu-container">
+
+            <div class="menu-grid">
+
+                <button
+                    class="menu-button"
+                    onclick="openPopup('Forex💸', 'assets/forex.zip')">
+                    Forex💸
+                </button>
+
+                <button
+                    class="menu-button"
+                    onclick="openPopup('Cryptocurrency🪙', 'assets/cryptocurrency.zip')">
+                    Cryptocurrency🪙
+                </button>
+
+                <button
+                    class="menu-button"
+                    onclick="openPopup('Investment💰', 'assets/investment.zip')">
+                    Investment💰
+                </button>
+
+                <button
+                    class="menu-button"
+                    onclick="openPopup('Stock Market📈', 'assets/stock-market.zip')">
+                    Stock Market📈
+                </button>
+
+                <button
+                    class="menu-button"
+                    onclick="openPopup('Business📊', 'assets/business.zip')">
+                    Business📊
+                </button>
+
+                <button
+                    class="menu-button"
+                    onclick="openPopup('Accounting📝', 'assets/accounting.zip')">
+                    Accounting📝
+                </button>
+
+                <button
+                    class="menu-button"
+                    onclick="openPopup('Workout🤸‍♂️', 'assets/workout.zip')">
+                    Workout🤸‍♂️
+                </button>
+
+                <button
+                    class="menu-button"
+                    onclick="openPopup('Money Management💵', 'assets/money-management.zip')">
+                    Money Management💵
+                </button>
+
+                <button
+                    class="menu-button"
+                    onclick="openPopup('Education📚', 'assets/education.zip')">
+                    Education📚
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- DISCLAIMER -->
+
+        <div class="disclaimer">
+            Disclaimer⚠️<br>
+            Trading Forex dan Kripto tidak menjamin anda menjadi cepat kaya,
+            untuk itu lebih baik anda membuat bisnis dulu, jika terjadi kerugian
+            dalam trading, jangan menyalahkan dan mengatasnamakan saya, karena
+            saya hanya memberi edukasi, bukan janji pasti!
+        </div>
+
+    </main>
+
+
+    <!-- =========================
+         POPUP
+    ========================== -->
+
+    <div id="popupOverlay">
+
+        <div class="popup">
+
+            <h2 id="popupTitle">
+                Ndukuh Capital
+            </h2>
+
+            <p>
+                Apakah kamu yakin mendownload file ini?
+            </p>
+
+            <div class="popup-buttons">
+
+                <button
+                    class="download-button"
+                    onclick="downloadFile()">
+                    Download File
+                </button>
+
+                <button
+                    class="cancel-button"
+                    onclick="closePopup()">
+                    Batalkan
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        /* =========================
+           LOADING
+        ========================== */
+
+        window.addEventListener("load", function () {
+
+            setTimeout(function () {
+
+                const loadingScreen =
+                    document.getElementById("loadingScreen");
+
+                const mainContent =
+                    document.getElementById("mainContent");
+
+                loadingScreen.classList.add("hide");
+
+                mainContent.style.display = "block";
+
+            }, 1800);
+
+        });
+
+
+        /* =========================
+           POPUP DATA
+        ========================== */
+
+        let selectedFile = "";
+
+
+        function openPopup(title, filePath) {
+
+            selectedFile = filePath;
+
+            document.getElementById("popupTitle").textContent =
+                title;
+
+            document.getElementById("popupOverlay").style.display =
+                "flex";
+        }
+
+
+        function closePopup() {
+
+            document.getElementById("popupOverlay").style.display =
+                "none";
+
+            selectedFile = "";
+        }
+
+
+        /* =========================
+           DOWNLOAD ZIP
+        ========================== */
+
+        function downloadFile() {
+
+            if (!selectedFile) {
+                return;
+            }
+
+            /*
+             * Membuat elemen <a> secara otomatis.
+             * Path dibuat relatif terhadap index.html.
+             */
+
+            const link = document.createElement("a");
+
+            link.href = selectedFile;
+
+            link.setAttribute("download", "");
+
+            link.style.display = "none";
+
+            document.body.appendChild(link);
+
+            link.click();
+
+            document.body.removeChild(link);
+
+            closePopup();
+
+        }
+
+
+        /* =========================
+           CLOSE POPUP KLIK LUAR
+        ========================== */
+
+        document.getElementById("popupOverlay")
+            .addEventListener("click", function(event) {
+
+                if (event.target === this) {
+                    closePopup();
+                }
+
+            });
+
+
+        /* =========================
+           ESCAPE UNTUK MENUTUP POPUP
+        ========================== */
+
+        document.addEventListener("keydown", function(event) {
+
+            if (event.key === "Escape") {
+                closePopup();
+            }
+
+        });
+
+    </script>
+
+</body>
+</html>
